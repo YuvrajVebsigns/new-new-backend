@@ -1,0 +1,140 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema as MongooseSchema } from 'mongoose';
+import {
+  BaseSchema,
+  applySoftDeleteMiddleware,
+} from '@common/schemas/base.schema';
+
+export enum AttendeeStatus {
+  INVITED = 'INVITED',
+  REGISTERED = 'REGISTERED',
+  CHECKED_IN = 'CHECKED_IN',
+  BLOCKED = 'BLOCKED',
+  REJECTED = 'REJECTED',
+}
+
+@Schema({
+  collection: 'attendees',
+  timestamps: true,
+})
+export class Attendee extends BaseSchema {
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Event',
+    required: true,
+  })
+  eventId: MongooseSchema.Types.ObjectId;
+
+  @Prop({ required: true, trim: true })
+  name: string;
+
+  @Prop({ required: true, trim: true, lowercase: true })
+  email: string;
+
+  @Prop({ trim: true, index: true })
+  countryCode: string;
+
+  @Prop({ trim: true, index: true })
+  phoneNumber: string;
+
+  @Prop({ trim: true })
+  organization: string;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Website',
+    required: false,
+  })
+  websiteId?: MongooseSchema.Types.ObjectId;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Registree',
+    required: false,
+  })
+  registreeId?: MongooseSchema.Types.ObjectId;
+
+  @Prop({
+    type: String,
+    enum: Object.values(AttendeeStatus),
+    default: AttendeeStatus.INVITED,
+    index: true,
+  })
+  status: AttendeeStatus;
+
+  @Prop({ required: true, unique: true, trim: true })
+  passCode: string;
+
+  @Prop({ trim: true })
+  qrCode: string; // Base64 or URL
+
+  @Prop({ type: Date, default: Date.now })
+  registeredAt: Date;
+
+  @Prop({ type: Date })
+  checkedInAt: Date;
+
+  @Prop({
+    type: {
+      userId: MongooseSchema.Types.ObjectId,
+      name: String,
+      email: String,
+    },
+    required: false,
+    _id: false,
+  })
+  checkedInBy?: {
+    userId: MongooseSchema.Types.ObjectId;
+    name: string;
+    email: string;
+  };
+
+  @Prop({
+    type: {
+      name: String,
+      countryCode: String,
+      phoneNumber: String,
+      organization: String,
+      websiteId: { type: MongooseSchema.Types.ObjectId, ref: 'Website' },
+      eventId: { type: MongooseSchema.Types.ObjectId, ref: 'Event' },
+      passCode: String,
+      qrCode: String,
+      attended: { type: Boolean, default: false },
+      attendedAt: Date,
+      savedAt: { type: Date, default: Date.now },
+    },
+    required: false,
+    _id: false,
+  })
+  registrationDetails?: {
+    name: string;
+    countryCode?: string;
+    phoneNumber?: string;
+    organization?: string;
+    websiteId?: MongooseSchema.Types.ObjectId;
+    eventId?: MongooseSchema.Types.ObjectId;
+    passCode?: string;
+    qrCode?: string;
+    attended: boolean;
+    attendedAt?: Date;
+    savedAt: Date;
+  };
+}
+
+export const AttendeeSchema = SchemaFactory.createForClass(Attendee);
+
+// Apply soft delete middleware
+applySoftDeleteMiddleware(AttendeeSchema);
+
+AttendeeSchema.set('toJSON', {
+  getters: true,
+  virtuals: true,
+  transform: (doc, ret: any) => {
+    if (ret._id) ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
+
+AttendeeSchema.index({ eventId: 1, email: 1 }, { unique: true });
