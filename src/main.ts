@@ -97,13 +97,13 @@ async function bootstrap() {
     `http://localhost:${configService.get<number>('PORT')}/`,
     `http://localhost:3000`,
     `http://localhost:3000/`,
-    `http://localhost:5050`,
-    `http://localhost:5050/`,
-    `http://localhost:5050/api/docs`,
+    `http://localhost:5051`,
+    `http://localhost:5051/`,
+    `http://localhost:5051/api/docs`,
     'https://admin.uatcoremedia.vebsigns.com',
     'https://admin.uatcoremedia.vebsigns.com/',
-    'https://backend.uatcoremedia.vebsigns.com',
-    'https://backend.uatcoremedia.vebsigns.com/',
+    'https://backend.vishwasai.in',
+    'https://backend.vishwasai.in/',
     'https://website.uatcoremedia.vebsigns.com',
     'https://website.uatcoremedia.vebsigns.com/',
   ];
@@ -160,7 +160,7 @@ async function bootstrap() {
     .setTitle('Vishwasai Consultancy API')
     .setDescription('The Vishwasai Consultancy API documentation (Version 1)')
     .setVersion('1.0')
-    .addServer('https://backend.uatcoremedia.vebsigns.com', 'Test Server')
+    .addServer('https://backend.vishwasai.in', 'Production Server')
     .addServer(serverUrl, 'Local Development')
     .addBearerAuth()
     .addBearerAuth(

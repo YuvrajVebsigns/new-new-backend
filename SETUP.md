@@ -13,7 +13,7 @@ cp .env.example .env.local
 ```bash
 STORAGE_PROVIDER=local
 UPLOADS_DIR=./uploads
-CDN_URL=http://localhost:5050/uploads
+CDN_URL=http://localhost:5051/uploads
 ```
 
 #### Option B: Supabase Storage (Recommended)
