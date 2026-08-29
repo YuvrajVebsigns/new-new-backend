@@ -61,7 +61,8 @@ const redisQueueImports = [];
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test')
           .default('development'),
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().default(5051),
+        HOST: Joi.string().default('0.0.0.0'),
         JWT_SECRET: Joi.string().required(),
         MONGODB_URI: Joi.string().uri().required(),
         STORAGE_PROVIDER: Joi.string().optional().default('local'),

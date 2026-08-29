@@ -153,7 +153,8 @@ async function bootstrap() {
     prefix: '/uploads',
   });
 
-  const port = configService.get<number>('PORT') || 3000;
+  const port = configService.get<number>('PORT') || 5051;
+  const host = configService.get<string>('HOST', '0.0.0.0');
   const serverUrl = `http://localhost:${port}`;
 
   const swaggerConfig = new DocumentBuilder()
@@ -316,7 +317,7 @@ async function bootstrap() {
     );
   }
 
-  await app.listen(port);
+  await app.listen(port, host);
 
   const uri = configService.get<string>('MONGODB_URI');
   const url = await app.getUrl();
